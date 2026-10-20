@@ -4,12 +4,14 @@ import org.bvn28065.modelo.Genero;
 import org.bvn28065.repositorio.GeneroRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Scanner;
 
 // CommandLineRunner: Spring llama a run() cuando termina de arrancar.
 // @Component: Spring crea un objeto de esta clase y lo gestiona (un "bean").
 @Component
+@RequiredArgsConstructor
 public class MenuConsola implements CommandLineRunner {
 
     private final Scanner teclado = new Scanner(System.in);
@@ -17,9 +19,10 @@ public class MenuConsola implements CommandLineRunner {
     private final GeneroRepository generoRepository;
 
     // Spring ve que necesitamos un GeneroRepository y nos lo entrega (inyección de dependencias)
-    public MenuConsola(GeneroRepository generoRepository) {
+    // ** Comento el constructor como si estuviese BORRADO **
+    /*public MenuConsola(GeneroRepository generoRepository) {
         this.generoRepository = generoRepository;
-    }
+    }*/
 
     @Override
     public void run(String... args) {
