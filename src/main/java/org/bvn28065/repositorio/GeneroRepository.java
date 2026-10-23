@@ -1,6 +1,7 @@
 package org.bvn28065.repositorio;
 
 import org.bvn28065.modelo.Genero;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 // Solo una interfaz: Spring crea la clase que la implementa al arrancar.
@@ -8,3 +9,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface GeneroRepository extends JpaRepository<Genero, Integer> {
 
 }
+

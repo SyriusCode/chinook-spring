@@ -1,7 +1,7 @@
 package org.bvn28065.app;
 
-import org.bvn28065.modelo.Genero;
-import org.bvn28065.repositorio.GeneroRepository;
+import org.bvn28065.modelo.*;
+import org.bvn28065.repositorio.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,25 @@ public class MenuConsola implements CommandLineRunner {
     private final Scanner teclado = new Scanner(System.in);
 
     private final GeneroRepository generoRepository;
+    private final ArtistaRepository artistaRepository;
+    private final AlbumRepository albumRepository;
+    private final PistaRepository pistaRepository;
+    private final PlayListRepository playlistRepository;
 
+    // TEMPORAL: para llamarlo, escribe pruebaEntidades(); como primera línea de run()
+    private void pruebaEntidades() {
+        System.out.println("--- Paso 3: comprobar las entidades ---");
+
+        // findById devuelve un Optional (una caja); get() saca su contenido. Lo verás con calma en el paso 4
+        Album album = albumRepository.findById(1).get();
+        // @ManyToOne es EAGER: el artista ya viene cargado con el álbum
+        System.out.println("Álbum: " + album.getTitulo() + " de " + album.getArtista().getNombre());
+
+        Pista pista = pistaRepository.findById(1).get();
+        System.out.println("Pista: " + pista.getNombre() + " | " + pista.getDuracion() + " | " + pista.getGenero().getNombre());
+
+        System.out.println("Playlists: " + playlistRepository.count());
+    }
     // Spring ve que necesitamos un GeneroRepository y nos lo entrega (inyección de dependencias)
     // ** Comento el constructor como si estuviese BORRADO **
     /*public MenuConsola(GeneroRepository generoRepository) {
@@ -26,6 +44,7 @@ public class MenuConsola implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        pruebaEntidades(); //Temporal
         int opcion;
         do {
             mostrarMenu();
@@ -86,5 +105,9 @@ public class MenuConsola implements CommandLineRunner {
                 System.out.println("Escribe un número entero.");
             }
         }
+    }
+
+    public ArtistaRepository getArtistaRepository() {
+        return artistaRepository;
     }
 }

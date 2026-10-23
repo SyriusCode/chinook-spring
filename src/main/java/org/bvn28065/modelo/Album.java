@@ -26,6 +26,6 @@ public class Album {
     // En la tabla es un número (ArtistId); en Java es un objeto Artista.
     // Las relaciones @ManyToOne se cargan al momento (EAGER) si no decimos lo contrario.
     @ManyToOne(optional = false)
-    @JoinColumn(name = "ArtistaId")
+    @JoinColumn(name = "ArtistId")
     private Artista artista;
 }
