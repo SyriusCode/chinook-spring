@@ -36,6 +36,27 @@ public class MenuConsola implements CommandLineRunner {
 
         System.out.println("Playlists: " + playlistRepository.count());
     }
+
+    private void pruebaRecursion() {
+        Artista artista = new Artista();
+        artista.setNombre("Banda de prueba");
+
+        Album album = new Album();
+        album.setTitulo("Disco de prueba");
+        album.setArtista(artista);
+
+        // Mantener los dos lados sincronizados: si no, el objeto en memoria queda incoherente
+        artista.getAlbums().add(album);
+
+        System.out.println(artista);
+    }
+
+    private void pruebaLazy() {
+        Artista artista = artistaRepository.findById(1).get();
+        System.out.println("Artista: " + artista.getNombre());
+        System.out.println("Álbumes: " + artista.getAlbums().size());
+    }
+
     // Spring ve que necesitamos un GeneroRepository y nos lo entrega (inyección de dependencias)
     // ** Comento el constructor como si estuviese BORRADO **
     /*public MenuConsola(GeneroRepository generoRepository) {
@@ -44,7 +65,7 @@ public class MenuConsola implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        pruebaEntidades(); //Temporal
+        pruebaLazy(); //Temporal
         int opcion;
         do {
             mostrarMenu();

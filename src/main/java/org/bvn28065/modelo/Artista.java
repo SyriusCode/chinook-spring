@@ -25,7 +25,7 @@ public class Artista {
     private String nombre;
 
     // Lado inverso (opcional) de la relación 1:N: la clave foránea la tiene Album (atributo "artista").
-    // Solo sirve para poder escribir artista.getAlbumes(). Es LAZY por defecto.
+    // Solo sirve para poder escribir artista.getAlbums(). Es LAZY por defecto.
     @OneToMany(mappedBy = "artista")
     private Set<Album> albums = new HashSet<>();
 }
