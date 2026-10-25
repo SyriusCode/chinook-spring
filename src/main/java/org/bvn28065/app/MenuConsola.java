@@ -105,7 +105,7 @@ public class MenuConsola implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        pruebaCrud(); //Temporal
+        /*pruebaCrud();*/ //Temporal
         int opcion;
         do {
             mostrarMenu();
@@ -114,6 +114,9 @@ public class MenuConsola implements CommandLineRunner {
                 switch (opcion) {
                     case 1 -> listarGeneros();
                     case 0 -> System.out.println("Hasta pronto.");
+                    case 8 -> insertarAlbum();
+                    case 9 -> cambiarTituloAlbum();
+                    case 10 -> borrarAlbum();
                     default -> System.out.println("Esa opción no existe.");
                 }
             } catch (IllegalArgumentException e) {
@@ -149,6 +152,51 @@ public class MenuConsola implements CommandLineRunner {
         for (Genero genero : generoRepository.findAll()) {
             System.out.println(genero);
         }
+    }
+
+    private void insertarAlbum() {
+        String titulo = leerTexto("Título del álbum: ");
+        int artistaId = leerEntero("Id del artista: ");
+        // TODO 1: busca el artista con artistaRepository.findById(...). Devuelve un Optional<Artista>
+        Optional<Artista> artista = artistaRepository.findById(artistaId);
+        // TODO 2: si la caja está vacía (isEmpty()), lanza
+        //         new IllegalArgumentException("No existe el artista " + artistaId)
+        if (artista.isEmpty()) {
+            throw new IllegalArgumentException("No existe el artista " + artistaId);
+        }
+        // TODO 3: guarda un álbum nuevo: albumRepository.save(new Album(null, titulo, artista.get())).
+        Album album = albumRepository.save(new Album(null, titulo, artista.get()));
+        //         get() saca el artista de la caja. save devuelve el álbum con su id ya asignado: guárdalo
+        System.out.println("Álbum guardado con el id " + album.getId() + ".");
+    }
+
+    private void cambiarTituloAlbum() {
+        int albumId = leerEntero("Id del álbum: ");
+        String titulo = leerTexto("Nuevo título: ");
+        // TODO 1: busca el álbum con albumRepository.findById(...). Devuelve un Optional<Album>
+        Optional<Album> encontrado = albumRepository.findById(albumId);
+        // TODO 2: si la caja está vacía, lanza IllegalArgumentException("No existe el álbum " + albumId)
+        if (encontrado.isEmpty()) {
+            throw new IllegalArgumentException("No existe el album " + albumId);
+        }
+        // TODO 3: saca el álbum con get() y cambia su título con setTitulo(...)
+        Album album = encontrado.get();
+        album.setTitulo(titulo);
+        // TODO 4: guárdalo con albumRepository.save(...). Como ya tiene id, será un UPDATE
+        albumRepository.save(album);
+        System.out.println("Álbum actualizado.");
+    }
+
+    private void borrarAlbum() {
+        int albumId = leerEntero("Id del álbum que quieres borrar: ");
+        // TODO 1: si NO existe un álbum con ese id (albumRepository.existsById(...)),
+        //         lanza IllegalArgumentException("No existe el álbum " + albumId)
+        if (!albumRepository.existsById(albumId)) {
+            throw new IllegalArgumentException("No existe el album " + albumId);
+        }
+        // TODO 2: bórralo con albumRepository.deleteById(...)
+        albumRepository.deleteById(albumId);
+        System.out.println("Álbum borrado.");
     }
 
     // ---------- Utilidades ----------
