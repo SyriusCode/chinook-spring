@@ -28,90 +28,6 @@ public class MenuConsola implements CommandLineRunner {
     private final GestorPlaylists gestorPlaylists;
     private final ConsultasArtistas consultasArtistas;
 
-    // TEMPORAL: para llamarlo, escribe pruebaEntidades(); como primera línea de run()
-    private void pruebaAtomicidad() {
-        try {
-            // la pista 999999 no existe
-            gestorPlaylists.crearConPistas("Lista de prueba", List.of(1, 2, 999999));
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error: " + e.getMessage());
-        }
-        contarPistasPorPlaylist();      // la opción 11 del menú
-    }
-
-    private void pruebaCrud() {
-        System.out.println("--- Paso 4: CRUD ---");
-
-        // INSERT: save() con un objeto sin id. Devuelve el objeto con el id ya asignado
-        Genero nuevo = generoRepository.save(new Genero(null, "Género de prueba"));
-        System.out.println("Insertado: " + nuevo);
-
-        // UPDATE: save() con un objeto que ya tiene id
-        nuevo.setNombre("Género cambiado");
-        generoRepository.save(nuevo);
-
-        // SELECT por id: devuelve un Optional, porque el id podría no existir.
-        // isPresent(): ¿hay algo en la caja?   get(): saca el contenido
-        Optional<Genero> leido = generoRepository.findById(nuevo.getId());
-        if (leido.isPresent()) {
-            System.out.println("Leído: " + leido.get());
-        }
-
-        // orElse(null): el contenido, o null si la caja está vacía
-        Genero inexistente = generoRepository.findById(9999).orElse(null);
-        if (inexistente == null) {
-            System.out.println("Género 9999: no existe");
-        }
-
-        // isEmpty(): ¿está vacía la caja? Entonces lanzamos nosotros el error
-        Optional<Genero> otro = generoRepository.findById(9999);
-        try {
-            if (otro.isEmpty()) {
-                throw new IllegalArgumentException("No existe el género 9999");
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error controlado: " + e.getMessage());
-        }
-
-        // DELETE
-        generoRepository.deleteById(nuevo.getId());
-        System.out.println("Géneros en total: " + generoRepository.count());
-    }
-
-    private void pruebaEntidades() {
-        System.out.println("--- Paso 3: comprobar las entidades ---");
-
-        // findById devuelve un Optional (una caja); get() saca su contenido. Lo verás con calma en el paso 4
-        Album album = albumRepository.findById(1).get();
-        // @ManyToOne es EAGER: el artista ya viene cargado con el álbum
-        System.out.println("Álbum: " + album.getTitulo() + " de " + album.getArtista().getNombre());
-
-        Pista pista = pistaRepository.findById(1).get();
-        System.out.println("Pista: " + pista.getNombre() + " | " + pista.getDuracion() + " | " + pista.getGenero().getNombre());
-
-        System.out.println("Playlists: " + playlistRepository.count());
-    }
-
-    private void pruebaRecursion() {
-        Artista artista = new Artista();
-        artista.setNombre("Banda de prueba");
-
-        Album album = new Album();
-        album.setTitulo("Disco de prueba");
-        album.setArtista(artista);
-
-        // Mantener los dos lados sincronizados: si no, el objeto en memoria queda incoherente
-        artista.getAlbums().add(album);
-
-        System.out.println(artista);
-    }
-
-    private void pruebaLazy() {
-        Artista artista = artistaRepository.findById(1).get();
-        System.out.println("Artista: " + artista.getNombre());
-        System.out.println("Álbumes: " + artista.getAlbums().size());
-    }
-
     // Spring ve que necesitamos un GeneroRepository y nos lo entrega (inyección de dependencias)
     // ** Comento el constructor como si estuviese BORRADO **
     /*public MenuConsola(GeneroRepository generoRepository) {
@@ -120,7 +36,6 @@ public class MenuConsola implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        /*pruebaAtomicidad(); *///Temporal
         int opcion;
         do {
             mostrarMenu();

@@ -27,5 +27,6 @@ public class Artista {
     // Lado inverso (opcional) de la relación 1:N: la clave foránea la tiene Album (atributo "artista").
     // Solo sirve para poder escribir artista.getAlbums(). Es LAZY por defecto.
     @OneToMany(mappedBy = "artista")
+    @ToString.Exclude
     private Set<Album> albums = new HashSet<>();
 }
