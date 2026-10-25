@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Scanner;
+import java.util.Optional;
 
 // CommandLineRunner: Spring llama a run() cuando termina de arrancar.
 // @Component: Spring crea un objeto de esta clase y lo gestiona (un "bean").
@@ -23,6 +24,45 @@ public class MenuConsola implements CommandLineRunner {
     private final PlayListRepository playlistRepository;
 
     // TEMPORAL: para llamarlo, escribe pruebaEntidades(); como primera línea de run()
+    private void pruebaCrud() {
+        System.out.println("--- Paso 4: CRUD ---");
+
+        // INSERT: save() con un objeto sin id. Devuelve el objeto con el id ya asignado
+        Genero nuevo = generoRepository.save(new Genero(null, "Género de prueba"));
+        System.out.println("Insertado: " + nuevo);
+
+        // UPDATE: save() con un objeto que ya tiene id
+        nuevo.setNombre("Género cambiado");
+        generoRepository.save(nuevo);
+
+        // SELECT por id: devuelve un Optional, porque el id podría no existir.
+        // isPresent(): ¿hay algo en la caja?   get(): saca el contenido
+        Optional<Genero> leido = generoRepository.findById(nuevo.getId());
+        if (leido.isPresent()) {
+            System.out.println("Leído: " + leido.get());
+        }
+
+        // orElse(null): el contenido, o null si la caja está vacía
+        Genero inexistente = generoRepository.findById(9999).orElse(null);
+        if (inexistente == null) {
+            System.out.println("Género 9999: no existe");
+        }
+
+        // isEmpty(): ¿está vacía la caja? Entonces lanzamos nosotros el error
+        Optional<Genero> otro = generoRepository.findById(9999);
+        try {
+            if (otro.isEmpty()) {
+                throw new IllegalArgumentException("No existe el género 9999");
+            }
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error controlado: " + e.getMessage());
+        }
+
+        // DELETE
+        generoRepository.deleteById(nuevo.getId());
+        System.out.println("Géneros en total: " + generoRepository.count());
+    }
+
     private void pruebaEntidades() {
         System.out.println("--- Paso 3: comprobar las entidades ---");
 
@@ -65,7 +105,7 @@ public class MenuConsola implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        pruebaLazy(); //Temporal
+        pruebaCrud(); //Temporal
         int opcion;
         do {
             mostrarMenu();
