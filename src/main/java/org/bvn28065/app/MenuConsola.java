@@ -1,11 +1,12 @@
 package org.bvn28065.app;
 
 import org.bvn28065.modelo.*;
+import org.bvn28065.operaciones.GestorPlaylists;
 import org.bvn28065.repositorio.*;
+import org.bvn28065.operaciones.ConsultasArtistas;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
-
 import java.util.Scanner;
 import java.util.Optional;
 import java.math.BigDecimal;
@@ -24,8 +25,20 @@ public class MenuConsola implements CommandLineRunner {
     private final AlbumRepository albumRepository;
     private final PistaRepository pistaRepository;
     private final PlayListRepository playlistRepository;
+    private final GestorPlaylists gestorPlaylists;
+    private final ConsultasArtistas consultasArtistas;
 
     // TEMPORAL: para llamarlo, escribe pruebaEntidades(); como primera línea de run()
+    private void pruebaAtomicidad() {
+        try {
+            // la pista 999999 no existe
+            gestorPlaylists.crearConPistas("Lista de prueba", List.of(1, 2, 999999));
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+        contarPistasPorPlaylist();      // la opción 11 del menú
+    }
+
     private void pruebaCrud() {
         System.out.println("--- Paso 4: CRUD ---");
 
@@ -107,7 +120,7 @@ public class MenuConsola implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        /*pruebaCrud();*/ //Temporal
+        /*pruebaAtomicidad(); *///Temporal
         int opcion;
         do {
             mostrarMenu();
@@ -126,6 +139,8 @@ public class MenuConsola implements CommandLineRunner {
                     case 9 -> cambiarTituloAlbum();
                     case 10 -> borrarAlbum();
                     case 11 -> contarPistasPorPlaylist();
+                    case 12 -> anadirPistaAPlaylist();
+                    case 13 -> titulosDeAlbums();
                     default -> System.out.println("Esa opción no existe.");
                 }
             } catch (IllegalArgumentException e) {
@@ -295,6 +310,29 @@ public class MenuConsola implements CommandLineRunner {
             } catch (NumberFormatException e) {
                 System.out.println("Escribe un número entero.");
             }
+        }
+    }
+
+    private void anadirPistaAPlaylist() {
+        int playlistId = leerEntero("Id de la playlist: ");
+        int pistaId = leerEntero("Id de la pista: ");
+        // TODO 1: llama a gestorPlaylists.anadirPista(playlistId, pistaId). Devuelve true si la pista se ha añadido
+        boolean agregada = gestorPlaylists.anadirPista(playlistId, pistaId);
+        // TODO 2: si devuelve true, escribe "Pista añadida a la playlist."
+        //         si no, escribe "La pista ya estaba en la playlist."
+        if (agregada) {
+            System.out.println("Pista añadida correctamente a la Playlist.");
+        } else {
+            System.out.println("La pista ya estaba en la playlist");
+        }
+    }
+
+    private void titulosDeAlbums() {
+        int artistaId = leerEntero("Id del artista: ");
+        // TODO: llama a consultasArtistas.titulosDeAlbumes(artistaId), que devuelve una List<String>,
+        //       e imprime cada título con un for
+        for (String titulo : consultasArtistas.titulosDeAlbumes(artistaId)) {
+            System.out.println(titulo);
         }
     }
 
