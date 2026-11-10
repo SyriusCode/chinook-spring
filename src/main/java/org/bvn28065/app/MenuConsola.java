@@ -14,7 +14,7 @@ import java.util.List;
 
 // CommandLineRunner: Spring llama a run() cuando termina de arrancar.
 // @Component: Spring crea un objeto de esta clase y lo gestiona (un "bean").
-@Component
+// @Component
 @RequiredArgsConstructor
 public class MenuConsola implements CommandLineRunner {
 
