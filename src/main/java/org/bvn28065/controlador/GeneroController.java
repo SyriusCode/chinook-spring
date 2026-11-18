@@ -1,6 +1,6 @@
 package org.bvn28065.controlador;
 
-import org.bvn28065.modelo.Genero;
+import org.bvn28065.dto.GeneroResumen;
 import org.bvn28065.servicio.GeneroService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,8 +26,8 @@ public class GeneroController {
         StringBuilder html = new StringBuilder();
         html.append("<h1>Géneros</h1><ul>");
         // TODO 6: recorre generoService.listar() y añade un <li> con el nombre escapado de cada género
-        for (Genero genero : generoService.listar()) {
-            html.append("<li>").append(Html.esc(genero.getNombre())).append("</li>");
+        for (GeneroResumen genero : generoService.listar()) {
+            html.append("<li>").append(Html.esc(genero.nombre())).append("</li>");
         }
         html.append("</ul>");
         return html.toString();

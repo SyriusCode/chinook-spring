@@ -1,10 +1,12 @@
 package org.bvn28065.servicio;
 
-import org.bvn28065.modelo.Artista;
+import org.bvn28065.dto.ArtistaDetalle;
+import org.bvn28065.dto.ArtistaResumen;
+
 import java.util.List;
 
 public interface ArtistaService {
-    List<Artista> buscarPorNombre(String texto);
+    List<ArtistaResumen> buscarPorNombre(String texto);
 
-    Artista buscarPorId(Integer id);
+    ArtistaDetalle buscarPorId(Integer id);
 }

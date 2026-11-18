@@ -1,7 +1,8 @@
 package org.bvn28065.controlador;
 
-import org.bvn28065.modelo.Album;
-import org.bvn28065.modelo.Artista;
+import org.bvn28065.dto.AlbumResumen;
+import org.bvn28065.dto.ArtistaResumen;
+import org.bvn28065.dto.ArtistaDetalle;
 import org.bvn28065.servicio.ArtistaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ public class ArtistaController {
 
     private final ArtistaService artistaService;
 
-    // El controlador ya no conoce los repositorios: solo el servicio
+    // Inyección por constructor: Spring pasa aquí el servicio (paso 4)
     public ArtistaController(ArtistaService artistaService) {
         this.artistaService = artistaService;
     }
@@ -37,12 +38,11 @@ public class ArtistaController {
                 .append("<input name=\"texto\" value=\"").append(Html.esc(texto)).append("\">")
                 .append(" <button>Buscar</button></form>");
         if (!texto.isBlank()) {
-            List<Artista> artistas = artistaService.buscarPorNombre(texto);
-            html.append("<p>Artistas que contienen «").append(Html.esc(texto)).append("»: ")
-                    .append(artistas.size()).append("</p><ul>");
-            for (Artista artista : artistas) {
-                html.append("<li><a href=\"/artistas/").append(artista.getId()).append("\">")
-                        .append(Html.esc(artista.getNombre())).append("</a></li>");
+            List<ArtistaResumen> artistas = artistaService.buscarPorNombre(texto);
+            html.append("<p>Artistas que contienen «").append(Html.esc(texto)).append("»: ").append(artistas.size()).append("</p><ul>");
+            for (ArtistaResumen artista : artistas) {
+                html.append("<li><a href=\"/artistas/").append(artista.id()).append("\">")
+                        .append(Html.esc(artista.nombre())).append("</a></li>");
             }
             html.append("</ul>");
         }
@@ -52,15 +52,19 @@ public class ArtistaController {
     @GetMapping("/{id}")
     @ResponseBody
     public String ficha(@PathVariable Integer id) {
-        Artista artista = artistaService.buscarPorId(id);
+        ArtistaDetalle artista = artistaService.buscarPorId(id);
         StringBuilder html = new StringBuilder();
-        html.append("<h1>").append(Html.esc(artista.getNombre())).append("</h1>");
-        html.append("<ul>");
-        for (Album album : artista.getAlbums()) {      // relación LAZY: se carga aquí, en el controlador
-            html.append("<li><a href=\"/albums/").append(album.getId()).append("\">")
-                    .append(Html.esc(album.getTitulo())).append("</a></li>");
+        html.append("<h1>").append(Html.esc(artista.nombre())).append("</h1>");
+        if (artista.albums().isEmpty()) {
+            html.append("<p>").append(artista.albums().size()).append(" álbums:</p>");
+        } else {
+            html.append("<ul>");
+            for (AlbumResumen album : artista.albums()) {
+                html.append("<li><a href=\"/albums/").append(album.id()).append("\">")
+                        .append(Html.esc(album.titulo())).append("</a></li>");
+            }
+            html.append("</ul>");
         }
-        html.append("</ul>");
         return html.toString();
     }
 }
