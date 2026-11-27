@@ -20,13 +20,15 @@ public class Factura {
     @Column(name = "InvoiceId")
     private Integer id;
 
-    @Column(name = "CustomerId")
-    private Integer idCliente;
-
     @Column(name = "InvoiceDate")
     private LocalDateTime fecha;
 
     @Column(name = "Total")
     private Float total;
+
+    // Tercer y ultimo paso para convertir una clase a Entidad
+    // Este paso solo es necesario si existe una RELACION entre tablas
+    @ManyToOne
+    private Cliente idCliente;
 
 }
